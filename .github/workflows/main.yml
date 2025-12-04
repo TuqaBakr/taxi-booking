@@ -1,0 +1,53 @@
+name: Taxi Booking CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    name: Build, Analyze & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout Code
+      - uses: actions/checkout@v4
+
+      # 2. Setup Java (Required for Android Build)
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      # 3. Setup Flutter
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.8'
+          channel: 'stable'
+
+      # 4. Install Dependencies
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # 5. Run Linter (Requirement: Zero errors)
+      - name: Analyze Code
+        run: flutter analyze --no-fatal-infos
+
+      # 6. Run Tests (Requirement: All tests pass)
+      # Note: This will fail if you have no tests yet.
+      # We will add a dummy test in a moment to ensure the pipeline passes now.
+      - name: Run Tests
+        run: flutter test
+
+      # 7. Build APK (Requirement: Generate Artifact)
+      - name: Build APK
+        run: flutter build apk --release
+
+      # 8. Upload Artifact (Requirement: Downloadable APK)
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: taxi-app-release
+          path: build/app/outputs/flutter-apk/app-release.apk
