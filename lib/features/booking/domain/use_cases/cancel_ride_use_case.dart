@@ -1,0 +1,4 @@
+class CancelRideUseCase {
+  void call() {
+  }
+}

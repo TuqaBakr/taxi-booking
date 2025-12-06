@@ -1,0 +1,65 @@
+{
+  "drivers": [
+    {
+      "id": "d1",
+      "name": "Ahmed Hassan",
+      "phone": "+966501234567",
+      "photo": "https://randomuser.me/api/portraits/men/1.jpg",
+      "rating": 4.8,
+      "total_trips": 1243,
+      "vehicle": {
+        "type": "Economy",
+        "make": "Toyota",
+        "model": "Camry",
+        "year": 2022,
+        "color": "White",
+        "plate_number": "ABC 1234"
+      },
+      "location": {
+        "latitude": 24.7136,
+        "longitude": 46.6753
+      },
+      "is_available": true
+    },
+    {
+      "id": "d2",
+      "name": "Sara Ali",
+      "phone": "+966501234568",
+      "photo": "https://randomuser.me/api/portraits/women/2.jpg",
+      "rating": 4.6,
+      "total_trips": 980,
+      "vehicle": {
+        "type": "Comfort",
+        "make": "Honda",
+        "model": "Accord",
+        "year": 2021,
+        "color": "Black",
+        "plate_number": "XYZ 5678"
+      },
+      "location": {
+        "latitude": 24.7200,
+        "longitude": 46.6800
+      },
+      "is_available": false
+    }
+  ],
+  "fare_rules": {
+    "base_fare": 5.0,
+    "per_km_rate": {
+      "Economy": 2.0,
+      "Comfort": 3.0,
+      "Premium": 5.0
+    },
+    "per_minute_rate": {
+      "Economy": 0.5,
+      "Comfort": 0.75,
+      "Premium": 1.0
+    },
+    "minimum_fare": {
+      "Economy": 10.0,
+      "Comfort": 15.0,
+      "Premium": 25.0
+    },
+    "currency": "SAR"
+  }
+}
