@@ -1,7 +1,12 @@
 # 🚖 Taxi Booking App
 
 A Flutter-based mobile application for booking taxis.  
-This project demonstrates **clean architecture**, **Cubit state management**, and **modern UI/UX patterns**.
+This project demonstrates **Bloc state management**, **clean architecture principles**, and **modern UI/UX patterns**.
+
+![CI/CD](https://github.com/TuqaBakr/taxi-booking/actions/workflows/main.yml/badge.svg)
+
+---
+
 
 ## ✨ Features
 - 🗺️ Interactive map with pickup & destination markers
@@ -94,7 +99,11 @@ Run tests by name:
 
 ⚙️ CI/CD
 This project uses GitHub Actions to run tests automatically on every push.
-See .github/workflows/flutter.yml for configuration
+Pipeline includes:
+- ✅ flutter analyze — must pass with no errors
+- ✅ flutter test — all tests must pass
+- ✅ Build APK and upload as artifact
+  You can check the latest workflow runs in the Actions tab.
 
 
 🤝 Contributing
