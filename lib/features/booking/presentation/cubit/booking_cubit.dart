@@ -31,7 +31,6 @@ class BookingCubit extends Cubit<BookingState> {
     required String vehicleType,
     required FareRulesModel fareRules,
     required List<DriverModel> drivers,
-    required double estimatedFare,
   }) async{
     final fare = calculateFare(
       distanceKm: distanceKm,
@@ -39,8 +38,7 @@ class BookingCubit extends Cubit<BookingState> {
       fareRules: fareRules,
     );
     emit(RideRequested(fare));
-    // Simulate 2-second delay
-   await Future.delayed(Duration(seconds:3));
+   await Future.delayed(Duration(seconds:2));
     final driver = drivers.first;
     await acceptDriver(driver, 300);
   }

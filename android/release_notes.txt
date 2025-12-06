@@ -1,0 +1,2 @@
+First Firebase App Distribution test build.
+Includes booking flow and Firebase integration.

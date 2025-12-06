@@ -8,6 +8,8 @@ import 'package:taxi_booking/features/booking/presentation/cubit/booking_cubit.d
 import 'package:taxi_booking/features/booking/presentation/cubit/booking_state.dart';
 
 import '../../../../core/routing/app_router.dart';
+import '../widgets/driver_marker.dart';
+import '../widgets/ride_requested_sheet.dart';
 
 class MapScreen extends StatefulWidget {
   final LocationService locationService;
@@ -21,7 +23,6 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   LatLng? _pickupLatLng;
   LatLng? _destinationLatLng;
-  bool _isRequesting = false;
 
   @override
   void initState() {
@@ -30,11 +31,6 @@ class _MapScreenState extends State<MapScreen> {
     context.read<BookingCubit>().fetchInitialData();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    context.read<BookingCubit>().fetchInitialData();
-  }
 
 
   Future<void> _initLocation() async {
@@ -55,49 +51,56 @@ class _MapScreenState extends State<MapScreen> {
 
     return BlocConsumer<BookingCubit, BookingState>(
       listener: (context, state) async {
+        // if (state is RideRequested) {
+        //   showModalBottomSheet(
+        //     context: context,
+        //     backgroundColor: Colors.transparent,
+        //     isScrollControlled: true,
+        //     builder: (_) {
+        //       return Center(
+        //         child: Container(
+        //           margin: const EdgeInsets.symmetric(horizontal: 24),
+        //           padding: const EdgeInsets.all(16),
+        //           decoration: BoxDecoration(
+        //             color: Colors.white,
+        //             borderRadius: BorderRadius.circular(16),
+        //             boxShadow: [
+        //               BoxShadow(
+        //                 color: Colors.black26,
+        //                 blurRadius: 10,
+        //                 offset: Offset(0, 4),
+        //               ),
+        //             ],
+        //           ),
+        //           child: Column(
+        //             mainAxisSize: MainAxisSize.min,
+        //             children: [
+        //               const Text("Ride Requested!",
+        //                   style: TextStyle(
+        //                       fontSize: 20, fontWeight: FontWeight.bold)),
+        //               const SizedBox(height: 8),
+        //               Text("Estimated Fare: ${state.estimatedFare} SAR"),
+        //             ],
+        //           ),
+        //         ),
+        //       );
+        //     },
+        //   );
+        //
+        //   Future.delayed(const Duration(seconds: 2), () {
+        //     Navigator.pop(context);
+        //   });
+        // }
+
         if (state is RideRequested) {
           showModalBottomSheet(
             context: context,
-            backgroundColor: Colors.transparent,
-            isScrollControlled: true,
-            builder: (_) {
-              return Center(
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 24),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 10,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text("Ride Requested!",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 8),
-                      Text("Estimated Fare: ${state.estimatedFare} SAR"),
-                    ],
-                  ),
-                ),
-              );
-            },
+            builder: (_) => RideRequestedSheet(estimatedFare: state.estimatedFare),
           );
-
-          Future.delayed(const Duration(seconds: 2), () {
-            Navigator.pop(context);
-          });
         }
 
-
         if (state is DriverAccepted) {
+          Navigator.pop(context);
           final driver = state.driver;
           context.go(AppRoutes.driverAccepted, extra: {
             'driver': driver,
@@ -134,12 +137,11 @@ class _MapScreenState extends State<MapScreen> {
           for (final driver in state.drivers) {
             markers.add(
               Marker(
-                point: LatLng(driver.location.latitude,
-                    driver.location.longitude),
+                point: LatLng(driver.location.latitude, driver.location.longitude),
                 width: 50,
                 height: 50,
-                child: Icon(Icons.local_taxi,
-                    color: Colors.yellow, size: 30),
+                child: DriverMarker(driver: driver),
+
               ),
             );
           }
@@ -182,38 +184,32 @@ class _MapScreenState extends State<MapScreen> {
               ),
             ],
           ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: _pickupLatLng != null && _destinationLatLng != null
-                ? () async {
-              setState(() => _isRequesting = true);
+          floatingActionButton: BlocBuilder<BookingCubit, BookingState>(
+            builder: (context, state) {
+              final isLoading = state is RideRequested || state is BookingLoading;
 
-              final cubit = context.read<BookingCubit>();
-              if (cubit.state is BookingLoaded) {
-                final loaded = cubit.state as BookingLoaded;
-                final drivers = loaded.drivers;
-                cubit.requestRide(
-                  distanceKm: 3.0,
-                  vehicleType: "Economy",
-                  fareRules:loaded.fareRules,
-                  drivers: drivers,
-                  estimatedFare: 100.0,
-                );
-              }
-
-              setState(() => _isRequesting = false);
-            }
-                : null,
-            label: _isRequesting
-                ? const Text("Requesting...")
-                : const Text("Request Ride"),
-            icon: _isRequesting
-                ? const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(
-                  color: Colors.white, strokeWidth: 2),
-            )
-                : const Icon(Icons.local_taxi),
+              return FloatingActionButton.extended(
+                onPressed: _pickupLatLng != null && _destinationLatLng != null && state is BookingLoaded
+                    ? () {
+                  final loaded = state;
+                  context.read<BookingCubit>().requestRide(
+                    distanceKm: 3.0,
+                    vehicleType: "Economy",
+                    fareRules: loaded.fareRules,
+                    drivers: loaded.drivers,
+                  );
+                }
+                    : null,
+                label: isLoading ? const Text("Requesting...") : const Text("Request Ride"),
+                icon: isLoading
+                    ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                )
+                    : const Icon(Icons.local_taxi),
+              );
+            },
           ),
         );
       },

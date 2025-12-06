@@ -43,6 +43,8 @@ dev_dependencies:
   json_serializable: ^6.11.2
 
 flutter:
+  assets:
+    - assets/images/
 
   uses-material-design: true
 
