@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:taxi_booking/core/domain/services/remote_data_source.dart';
 import '../../data/models/base_response_model.dart';
 import '../../typedefs.dart';
-import 'RemoteDataSource.dart';
 typedef ProgressCallback = void Function(int sent, int total);
 
 

@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 
-import 'package:taxi_booking/core/domain/services/RemoteDataSource.dart';
+import 'package:taxi_booking/core/domain/services/remote_data_source.dart';
 import '../../../core/domain/error_handler/failures.dart';
 import '../../../core/domain/error_handler/network_exceptions.dart';
 import '../../../core/domain/error_handler/repository_handler.dart';
