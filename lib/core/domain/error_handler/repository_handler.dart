@@ -17,7 +17,7 @@ class RepositoryHandler {
       case DioExceptionType.cancel:
         return const NetworkExceptions.requestCancelled();
       case DioExceptionType.receiveTimeout:
-        return const NetworkExceptions.sendTimeout();;
+        return const NetworkExceptions.sendTimeout();
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
         return const NetworkExceptions.sendTimeout();
